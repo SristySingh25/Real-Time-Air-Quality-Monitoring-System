@@ -1,0 +1,152 @@
+#include <Wire.h>
+#include <LiquidCrystal_I2C.h>
+#include <DHT.h>
+
+// LCD setup
+LiquidCrystal_I2C lcd(0x27, 16, 2);  // I2C address, 16x2 display
+
+// DHT11 setup
+#define DHTPIN A3       // DHT11 data pin to A3
+#define DHTTYPE DHT11
+DHT dht(DHTPIN, DHTTYPE);
+
+// MQ135 setup
+#define MQ135_PIN A1    // Analog output of MQ135 to A1
+
+// Buzzer setup
+#define BUZZER_PIN 8    // Buzzer connected to digital pin 8
+
+// Air quality threshold
+#define AIR_QUALITY_THRESHOLD 100
+
+void setup() {
+  Serial.begin(9600);
+
+  lcd.init();
+  lcd.backlight();
+
+  dht.begin();
+  pinMode(BUZZER_PIN, OUTPUT);
+  digitalWrite(BUZZER_PIN, LOW);  // Buzzer off initially
+
+  lcd.setCursor(0, 0);
+  lcd.print("System Starting...");
+  delay(2000);
+  lcd.clear();
+}
+
+void loop() {
+  float temp = dht.readTemperature();
+  float hum = dht.readHumidity();
+  int airQuality = analogRead(MQ135_PIN);
+
+  // Display temperature and humidity
+  lcd.setCursor(0, 0);
+  lcd.print("T:");
+  lcd.print(temp, 1);  // 1 decimal place
+  lcd.print("C H:");
+  lcd.print(hum, 0);
+  lcd.print("%  ");    // pad to clear old characters
+
+  // Display air quality (pad extra spaces to remove leftover digits)
+  lcd.setCursor(0, 1);
+  lcd.print("Air:");
+  lcd.print(airQuality);
+  if (airQuality < 10) lcd.print("   ");
+  else if (airQuality < 100) lcd.print("  ");
+  else if (airQuality < 1000) lcd.print(" ");
+
+  // Trigger or clear "Bad!" warning and buzzer
+  if (airQuality > AIR_QUALITY_THRESHOLD) {
+    lcd.setCursor(10, 1);
+    lcd.print("Bad!");
+    digitalWrite(BUZZER_PIN, HIGH);
+  } else {
+    lcd.setCursor(10, 1);
+    lcd.print("     ");  // clear "Bad!" text
+    digitalWrite(BUZZER_PIN, LOW);
+  }
+
+  // Serial output
+  Serial.print("Temp: "); Serial.print(temp); Serial.print(" C, ");
+  Serial.print("Humidity: "); Serial.print(hum); Serial.print(" %, ");
+  Serial.print("Air Quality: "); Serial.println(airQuality);
+
+  delay(2000);
+}
+#include <Wire.h>
+#include <LiquidCrystal_I2C.h>
+#include <DHT.h>
+
+// LCD setup
+LiquidCrystal_I2C lcd(0x27, 16, 2);  // I2C address, 16x2 display
+
+// DHT11 setup
+#define DHTPIN A3       // DHT11 data pin to A3
+#define DHTTYPE DHT11
+DHT dht(DHTPIN, DHTTYPE);
+
+// MQ135 setup
+#define MQ135_PIN A1    // Analog output of MQ135 to A1
+
+// Buzzer setup
+#define BUZZER_PIN 8    // Buzzer connected to digital pin 8
+
+// Air quality threshold
+#define AIR_QUALITY_THRESHOLD 100
+
+void setup() {
+  Serial.begin(9600);
+
+  lcd.init();
+  lcd.backlight();
+
+  dht.begin();
+  pinMode(BUZZER_PIN, OUTPUT);
+  digitalWrite(BUZZER_PIN, LOW);  // Buzzer off initially
+
+  lcd.setCursor(0, 0);
+  lcd.print("System Starting...");
+  delay(2000);
+  lcd.clear();
+}
+
+void loop() {
+  float temp = dht.readTemperature();
+  float hum = dht.readHumidity();
+  int airQuality = analogRead(MQ135_PIN);
+
+  // Display temperature and humidity
+  lcd.setCursor(0, 0);
+  lcd.print("T:");
+  lcd.print(temp, 1);  // 1 decimal place
+  lcd.print("C H:");
+  lcd.print(hum, 0);
+  lcd.print("%  ");    // pad to clear old characters
+
+  // Display air quality (pad extra spaces to remove leftover digits)
+  lcd.setCursor(0, 1);
+  lcd.print("Air:");
+  lcd.print(airQuality);
+  if (airQuality < 10) lcd.print("   ");
+  else if (airQuality < 100) lcd.print("  ");
+  else if (airQuality < 1000) lcd.print(" ");
+
+  // Trigger or clear "Bad!" warning and buzzer
+  if (airQuality > AIR_QUALITY_THRESHOLD) {
+    lcd.setCursor(10, 1);
+    lcd.print("Bad!");
+    digitalWrite(BUZZER_PIN, HIGH);
+  } else {
+    lcd.setCursor(10, 1);
+    lcd.print("     ");  // clear "Bad!" text
+    digitalWrite(BUZZER_PIN, LOW);
+  }
+
+  // Serial output
+  Serial.print("Temp: "); Serial.print(temp); Serial.print(" C, ");
+  Serial.print("Humidity: "); Serial.print(hum); Serial.print(" %, ");
+  Serial.print("Air Quality: "); Serial.println(airQuality);
+
+  delay(2000);
+}
